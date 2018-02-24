@@ -1,9 +1,9 @@
 from trac.core import *
 from trac.web.auth import LoginModule
-from trac.web.chrome import add_notice
+# from trac.web.chrome import add_notice
 
 import re
-import time
+# import time
 import urlparse
 from requests_oauthlib import OAuth2Session
 
@@ -19,11 +19,6 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '0'
 client_id = 'w5BfBV4w0MvMM3XQtrC6Z8HwNyLZC7w4jj0AmMgf'
 client_secret = '6ASUeHVYPaZZAGhknfpuOKbeMWDL1oQmkWyVHeN3Rf85wRpcdkYh4uNeYrtaKrgf8C2C28pEfnsfoAFAXLmRnDQcFlkatDTPuw5HH84rNLhSscbF6lgdBj0y1XX367pE'
 
-
-# provider sandbox
-# client_id = 'ZWyhfRxCzM6bie9HCmnng7upNJ9tVrh9FxcTCSfk'
-# client_secret = 'pLIbRJYlaAM0OfkKOmlylSkk1xyr7paNREIBYv4XAbzMPADE6bvNIwI2rhSw9oupkXzBk3H05EhpjnE2V8XuickiKO52DT4kGdkfz2IXabuLTYiwB8ZEfUGsG1prbczZ'
-
 # Endpoint on this application for Rack&Pin OAuth
 trac_base_url = 'http://localhost:8001'
 api_base_url = 'https://localhost:8000'
@@ -31,14 +26,21 @@ redirect_uri = trac_base_url + '/oauth2callback'
 
 # OAuth endpoints given in the Rack&Pin API documentation
 
-authorization_base_url = api_base_url + "/o/authorize/"
+# authorization_base_url with production id will only authorize against
+# that hub
+# without the id, any valid Rack&Pin user can authorize
+
+production_id = 41
+authorization_base_url = api_base_url + "/o/authorize/%d/" % production_id
 token_url = api_base_url + "/o/token/"
 scope = [
     "read"
 ]
-production_id = 41
-member_authorization_url = "%s/api/member/%d" % (api_base_url,
-                                                 production_id)
+
+member_authorization_url = "%s/api/username" % api_base_url
+  
+# member_authorization_url = "%s/api/member/%d" % (api_base_url,
+#                                                  production_id)
 
 
 class OAuth2Plugin(LoginModule):
@@ -93,8 +95,10 @@ class OAuth2Plugin(LoginModule):
         try:
             r = session.get(member_authorization_url)
             authname = r.content
-        except:
-            add_warning(req, "Authorization failed for this user. Contact your production manager")
+        except Exception:
+            self.env.log.debug("*** Hey, this user not authorized ***")
+            add_warning(req, """Authorization failed for this user.
+                                Contact your production manager""")
 
             raise Exception("Authorization failed")
 

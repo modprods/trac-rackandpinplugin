@@ -14,31 +14,24 @@ import os
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '0'
 
-# Credentials you get from registering a new application
-# hub
-client_id = 'w5BfBV4w0MvMM3XQtrC6Z8HwNyLZC7w4jj0AmMgf'
-client_secret = '6ASUeHVYPaZZAGhknfpuOKbeMWDL1oQmkWyVHeN3Rf85wRpcdkYh4uNeYrtaKrgf8C2C28pEfnsfoAFAXLmRnDQcFlkatDTPuw5HH84rNLhSscbF6lgdBj0y1XX367pE'
-
 # Endpoint on this application for Rack&Pin OAuth
-trac_base_url = 'http://localhost:8001'
-api_base_url = 'https://localhost:8000'
-redirect_uri = trac_base_url + '/oauth2callback'
+TRAC_BASE_URL = 'http://localhost:8001'
+API_BASE_URL = 'https://localhost:8000'
+
+
 
 # OAuth endpoints given in the Rack&Pin API documentation
-
 # authorization_base_url with production id will only authorize against
 # that hub
 # without the id, any valid Rack&Pin user can authorize
 
-production_id = 41
-authorization_base_url = api_base_url + "/o/authorize/%d/" % production_id
-token_url = api_base_url + "/o/token/"
-scope = [
+PRODUCTION_ID = None
+
+SCOPE = [
     "read"
 ]
 
-member_authorization_url = "%s/api/username" % api_base_url
-  
+
 # member_authorization_url = "%s/api/member/%d" % (api_base_url,
 #                                                  production_id)
 
@@ -49,8 +42,6 @@ class OAuth2Plugin(LoginModule):
             LoginModule.match_request(self, req)
 
     def process_request(self, req):
-        self.env.log.debug("*** Hey, mmeber url is %r ***",
-                           member_authorization_url)
         if req.path_info.startswith("/login"):
             self._do_oauth2_login(req)
         elif req.path_info.startswith("/oauth2callback"):
@@ -60,7 +51,19 @@ class OAuth2Plugin(LoginModule):
         req.redirect(self.env.abs_href())
 
     def _do_oauth2_login(self, req):
+        trac_base_url = self.config.get('project', 'url', TRAC_BASE_URL)
+        redirect_uri = trac_base_url + '/oauth2callback'
+        api_base_url = self.config.get('rackandpin', 'api_base_url', API_BASE_URL)
+        production_id = self.config.get('rackandpin', 'production_id', PRODUCTION_ID)
+        client_id = self.config.get('rackandpin', 'client_id', '')
+        scope = self.config.get('rackandpin', 'scope', SCOPE)
 
+        if production_id:
+            authorization_base_url = api_base_url + "/o/authorize/%s/" % production_id
+        else:
+            authorization_base_url = api_base_url + "/o/authorize/"
+        self.env.log.debug("*** Hey, auth url is %r ***",
+                           authorization_base_url)
         session = OAuth2Session(client_id, scope=scope,
                                 redirect_uri=redirect_uri)
         authorization_url, state = session.authorization_url(
@@ -72,6 +75,13 @@ class OAuth2Plugin(LoginModule):
         req.redirect(authorization_url)
 
     def _do_callback(self, req):
+        trac_base_url = self.config.get('project', 'url', TRAC_BASE_URL)
+        api_base_url = self.config.get('rackandpin', 'api_base_url', API_BASE_URL)
+        client_id = self.config.get('rackandpin', 'client_id', '')
+        client_secret = self.config.get('rackandpin', 'client_secret', '')
+
+        token_url = api_base_url + "/o/token/"
+        redirect_uri = trac_base_url + '/oauth2callback'
         session = OAuth2Session(client_id, redirect_uri=redirect_uri,
                                 state=req.session['OAUTH_STATE'])
 
@@ -91,6 +101,7 @@ class OAuth2Plugin(LoginModule):
         req.environ["oauth_token"] = token
 
         # add_notice(req, "token: %s", token)
+        member_authorization_url = "%s/api/username" % api_base_url
 
         try:
             r = session.get(member_authorization_url)

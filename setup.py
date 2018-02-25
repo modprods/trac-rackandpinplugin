@@ -4,17 +4,17 @@
 from setuptools import setup
 
 VERSION = '0.1'
-PACKAGE = 'tracrackandpin'
+PACKAGE = 'rackandpin'
 
 setup(
-    name='RackAndPin',
+    name='TracRackAndPin',
     version=VERSION,
-    description="Lists components based on a name.",
-    url='http://trac-hacks.org/wiki/ComponentsProcessorMacro',
+    description="OAuth2 authentication against Rack&Pin.",
+    url='http://trac-hacks.org/wiki/TracRackAndPin',
     author='Michela Ledwidge',
     author_email='michela@mod.studio',
     keywords='trac plugin',
-    license="?",
+    license="Copyright (c) 2018, Mod Productions Pty Ltd",
     packages=[PACKAGE],
     include_package_data=True,
     package_data={},

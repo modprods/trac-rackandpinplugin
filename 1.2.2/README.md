@@ -1,8 +1,9 @@
 README.MD
 # trac-rackandpinplugin
 
-Plugin to authenticate users against [Rack&Pin](https://rackandpin.com/) service.
+Trac plugin to authenticate users against [Rack&Pin](https://rackandpin.com/) service.
 
+https://trac-hacks.org/wiki/TracRackAndPin
 
 ## Installation
 

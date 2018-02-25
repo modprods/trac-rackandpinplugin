@@ -8,8 +8,8 @@ Plugin to authenticate users against [Rack&Pin](https://rackandpin.com/) service
 
 Requirements:
 
-    Requests library: https://pypi.python.org/pypi/requests
-    $ pip install requests
+    Requests library: https://pypi.python.org/pypi/requests-oauthlib
+    $ pip install requests_oauthlib
 
 Deploy to a specific Trac environment:
 
@@ -20,7 +20,7 @@ Deploy to a specific Trac environment:
 Enable plugin in trac.ini:
 
     [components]
-    rackandpin.* = enabled
+    tracrackandpin.api.OAuth2Plugin = enabled
 
 Configuration in trac.ini :
 

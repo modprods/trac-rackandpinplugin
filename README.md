@@ -25,15 +25,16 @@ Enable plugin in trac.ini:
 
 Configuration in trac.ini :
 
-  [project]
-  url = <trac URI>
-    
-	[rackandpin]
-	client_id = <CLIENT_ID_STRING>
-	client_secret = <CLIENT_SECRET_STRING>
-	production_id = <PRODUCTION_ID_INTEGER>
-	api_base_url = <URL:PORT>
+    [trac]
+    base_url = <trac URI>
+      
+    [rackandpin]
+    client_id = <CLIENT_ID_STRING>
+    client_secret = <CLIENT_SECRET_STRING>
+    production_id = <PRODUCTION_ID_INTEGER>
+    api_base_url = https://rackandpin.com
 
+To authenticate against _any_ valid Rack&Pin user omit production_id line
 
 ## License
 

@@ -16,9 +16,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '0'
 
 # Endpoint on this application for Rack&Pin OAuth
 TRAC_BASE_URL = 'http://localhost:8001'
-API_BASE_URL = 'https://localhost:8000'
-
-
+API_BASE_URL = 'https://rackandpin.com'
 
 # OAuth endpoints given in the Rack&Pin API documentation
 # authorization_base_url with production id will only authorize against
@@ -51,7 +49,7 @@ class OAuth2Plugin(LoginModule):
         req.redirect(self.env.abs_href())
 
     def _do_oauth2_login(self, req):
-        trac_base_url = self.config.get('project', 'url', TRAC_BASE_URL)
+        trac_base_url = self.config.get('trac', 'base_url', TRAC_BASE_URL)
         redirect_uri = trac_base_url + '/oauth2callback'
         api_base_url = self.config.get('rackandpin', 'api_base_url', API_BASE_URL)
         production_id = self.config.get('rackandpin', 'production_id', PRODUCTION_ID)

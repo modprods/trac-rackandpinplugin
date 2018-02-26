@@ -21,10 +21,13 @@ Deploy to a specific Trac environment:
 Enable plugin in trac.ini:
 
     [components]
-    tracrackandpin.api.OAuth2Plugin = enabled
+    rackandpin.api.oauth2plugin = enabled
 
 Configuration in trac.ini :
 
+  [project]
+  url = <trac URI>
+    
 	[rackandpin]
 	client_id = <CLIENT_ID_STRING>
 	client_secret = <CLIENT_SECRET_STRING>

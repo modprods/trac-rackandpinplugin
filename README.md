@@ -36,6 +36,26 @@ Configuration in trac.ini :
 
 To authenticate against _any_ valid Rack&Pin user omit production_id line
 
+## Migrating from HTTP Basic Auth to OAUTH2 Auth
+
+If you have an existing trac using HTTP Basic Auth there is no way to logout.
+https://trac.edgewall.org/ticket/791
+
+You will need to restart your browser to start using OAUTH. Any sessions already authenticated by the web browser will remain open regardless of OAUTH2 privileges
+
+By default anoymous users have a number of permissions. You may wish to remove these and restrict visibility of the trac content to authenticated users.
+
+e.g.
+
+Administration | General | Permissions | Manage Permissions and Groups | Copy Permissions
+
+Subject: anonymous
+Target: authenticated
+"Add"
+
+Permissions
+Select all anonymous permissions and "Remove selected items"
+
 ## License
 
 Copyright (c) 2018, Mod Productions Pty Ltd

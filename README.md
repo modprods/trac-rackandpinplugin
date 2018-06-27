@@ -36,6 +36,11 @@ Configuration in trac.ini :
 
 To authenticate against _any_ valid Rack&Pin user omit production_id line
 
+    [metanav]
+    logout.redirect = https://rackandpin.com/logout_redirect?next=<trac URI>
+
+This line required to log user out of Rack&Pin completely
+
 ## Migrating from HTTP Basic Auth to OAUTH2 Auth
 
 If you have an existing trac using HTTP Basic Auth there is no way to logout.

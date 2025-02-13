@@ -22,6 +22,7 @@ Enable plugin in trac.ini:
 
     [components]
     rackandpin.api.oauth2plugin = enabled
+    trac.web.auth.loginmodule = disabled
 
 Configuration in trac.ini :
 
@@ -63,7 +64,7 @@ Select all anonymous permissions and "Remove selected items"
 
 ## License
 
-Copyright (c) 2018, Mod Productions Pty Ltd
+Copyright (c) 2025, Mod Productions Pty Ltd
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

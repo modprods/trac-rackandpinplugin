@@ -3,7 +3,7 @@
 
 from setuptools import setup
 
-VERSION = '1.3'
+VERSION = '1.6'
 PACKAGE = 'rackandpin'
 
 setup(

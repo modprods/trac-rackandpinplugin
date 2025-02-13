@@ -22,7 +22,8 @@ Enable plugin in trac.ini:
 
     [components]
     rackandpin.api.oauth2plugin = enabled
-
+    trac.web.auth.loginmodule = disabled
+    
 Configuration in trac.ini :
 
     [trac]

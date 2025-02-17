@@ -1,6 +1,9 @@
 from trac.core import *
+from trac.web.chrome import Chrome
 from trac.web.auth import LoginModule
-# from trac.web.chrome import add_notice
+from trac.web.chrome import add_notice, add_warning
+from trac.util.html import tag
+from trac.util.translation import _, tag_
 
 import re
 # import time
@@ -36,8 +39,31 @@ SCOPE = [
 
 class OAuth2Plugin(LoginModule):
     def match_request(self, req):
-        return re.match("/oauth2callback\??.*", req.path_info) or \
+        return re.match(r"/oauth2callback\??.*", req.path_info) or \
             LoginModule.match_request(self, req)
+
+    def get_navigation_items(self, req):
+        if req.is_authenticated:
+            yield ('metanav', 'login',
+                   tag_("logged in as %(user)s",
+                        user=Chrome(self.env).authorinfo(req, req.authname)))
+            yield ('metanav', 'logout',
+                   tag.form(
+                       tag.div(
+                           tag.button(_("Logout"), name='logout',
+                                      type='submit'),
+                           tag.input(type='hidden', name='__FORM_TOKEN',
+                                     value=req.form_token)
+                       ),
+                       action=req.href.logout(), method='post',
+                       id='logout', class_='trac-logout'))
+        else:
+            req.session['ORIGINAL_URL'] = req.href(req.path_info)
+            self.env.log.debug("*** ORIGINAL_URL: %r", req.href(req.path_info))
+            req.session.save() # causes no code to appear if included
+            yield ('metanav', 'login',
+                   tag.a(_("Login"), href=req.href.login())
+            )
 
     def process_request(self, req):
         if req.path_info.startswith("/login"):
@@ -113,4 +139,16 @@ class OAuth2Plugin(LoginModule):
 
         req.environ["REMOTE_USER"] = authname
         #        req.environ["REMOTE_USER"] = "marge"
-        LoginModule._do_login(self, req)
+        original_url = req.session.get('ORIGINAL_URL')
+        if original_url:
+            self.env.log.debug("retreived original_url: %r", original_url)
+            add_warning(req,f"original_url: {original_url}")
+            del req.session['ORIGINAL_URL']  # Clear it to avoid infinite loops
+            req.session.save()
+            # req.session.save()  # Ensure session changes are saved
+            LoginModule._do_login(self, req)
+            req.redirect(original_url)
+        else:
+            self.env.log.debug("no original_url")
+            LoginModule._do_login(self, req)
+        # LoginModule._do_login(self, req)

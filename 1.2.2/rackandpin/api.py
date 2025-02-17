@@ -46,8 +46,8 @@ class OAuth2Plugin(LoginModule):
         if req.authname and req.authname != 'anonymous':
             yield ('metanav', 'login', _('logged in as %(user)s',
                                          user=req.authname))
-            yield ('metanav', 'logout',
-                   tag.a(_('Logout'), href=req.href.logout()))
+            # yield ('metanav', 'logout',
+            #        tag.a(_('Logout'), href=req.href.logout()))
         else:
             req.session['ORIGINAL_URL'] = req.href(req.path_info)
             self.env.log.debug("*** ORIGINAL_URL: %r", req.href(req.path_info))

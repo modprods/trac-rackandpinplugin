@@ -142,7 +142,7 @@ class OAuth2Plugin(LoginModule):
         original_url = req.session.get('ORIGINAL_URL')
         if original_url:
             self.env.log.debug("retreived original_url: %r", original_url)
-            add_warning(req,f"original_url: {original_url}")
+            add_warning(req,"original_url: " + original_url)
             del req.session['ORIGINAL_URL']  # Clear it to avoid infinite loops
             req.session.save()
             # req.session.save()  # Ensure session changes are saved
